@@ -2,11 +2,7 @@ package amazed.solver;
 
 import amazed.maze.Maze;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
@@ -53,6 +49,34 @@ public class ForkJoinSolver
     }
 
     private List<Integer> parallelSearch() {
+        int player = maze.newPlayer(start);
+        frontier.push(start);
+
+        while (!frontier.empty()) {
+            int current = frontier.pop();
+
+            if (maze.hasGoal(current)) {
+                maze.move(player, current);
+                return pathFromTo(start, current);
+            }
+
+            if (!visited.contains(current)) {
+                maze.move(player, current);
+                visited.add(current);
+                System.out.println(current);
+
+                for (int nb: maze.neighbors(current)) {
+                    frontier.push(nb);
+                    // if nb has not been already visited,
+                    // nb can be reached from current (i.e., current is nb's predecessor)
+                    if (!visited.contains(nb)) {
+                        predecessor.put(nb, current);
+                    }
+                }
+            }
+        }
+
+        // all nodes explored, no goal found
         return null;
     }
 }

@@ -24,7 +24,7 @@ public class Main
     private final static String PARALLEL = "parallel";
 
     private static String map = "maps/medium.map";
-    private static boolean sequential = true;
+    private static boolean sequential = false;
     private static int forkAfter = 0;
     private static int period = 100;
 
