@@ -36,6 +36,13 @@ public class ForkJoinSolver
         this.forkAfter = forkAfter;
     }
 
+    @Override
+    protected void initStructures() {
+        visited = new ConcurrentSkipListSet<>(); // shared, so must be thread-safe
+        predecessor = new HashMap<>(); // merged together on join()
+        frontier = new Stack<>(); // completely local
+    }
+
     /**
      * Searches for and returns the path, as a list of node
      * identifiers, that goes from the start node to a goal node in
