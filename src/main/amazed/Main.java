@@ -23,7 +23,7 @@ public class Main
     private final static String SEQUENTIAL = "sequential";
     private final static String PARALLEL = "parallel";
 
-    private static String map = "maps/small.map";
+    private static String map = "maps/169medium.map";
     private static boolean sequential = false;
     private static int forkAfter = 0;
     private static int period = 100;

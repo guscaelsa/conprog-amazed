@@ -18,7 +18,18 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class ForkJoinSolver
     extends SequentialSolver
 {
-    List<ForkJoinSolver> children = new ArrayList<>();
+    protected static class Flag {
+        protected boolean state = false;
+        void set() {
+            state = true;
+        }
+        boolean get() {
+            return state;
+        }
+    }
+    protected List<ForkJoinSolver> children = new ArrayList<>();
+    protected Flag shutdown;
+
     /**
      * Creates a solver that searches in <code>maze</code> from the
      * start node to a goal.
@@ -35,15 +46,17 @@ public class ForkJoinSolver
     public ForkJoinSolver(Maze maze, int forkAfter) {
         this(maze);
         this.forkAfter = forkAfter;
+        this.shutdown = new Flag();
     }
 
-    public ForkJoinSolver(Maze maze, Set<Integer> visited, Map<Integer, Integer> predecessor, int start) {
+    public ForkJoinSolver(Maze maze, Set<Integer> visited, Map<Integer, Integer> predecessor, int start, Flag shutdown) {
         this(maze);
         this.predecessor.putAll(predecessor); // copy the parent's predecessor
 
-        // this is really ugly, but it's seems to be the way this class was designed
+        // this is really ugly, but it seems to be the way this class was designed
         this.visited = visited;
         this.start = start;
+        this.shutdown = shutdown;
     }
 
     @Override
@@ -73,13 +86,13 @@ public class ForkJoinSolver
         while (!frontier.empty()) {
             int current = frontier.pop();
 
-            if (maze.hasGoal(current)) {
-                maze.move(player, current);
-                return pathFromTo(maze.start(), current);
-            }
-
             if (visited.add(current)) { // "true if this set did not already contain the specified element"
                 maze.move(player, current);
+
+                if (maze.hasGoal(current)) {
+                    shutdown.set();
+                    return pathFromTo(maze.start(), current);
+                }
 
                 for (int nb: maze.neighbors(current)) {
                     // if nb has not been already visited,
@@ -88,8 +101,12 @@ public class ForkJoinSolver
                         predecessor.put(nb, current);
                     }
 
+                    if (shutdown.get()) {
+                        break;
+                    }
+
                     if (true /*should fork?*/) {
-                        ForkJoinSolver child = new ForkJoinSolver(maze, visited, predecessor, nb);
+                        ForkJoinSolver child = new ForkJoinSolver(maze, visited, predecessor, nb, shutdown);
                         children.add(child);
                         child.fork();
                     } else {
@@ -97,9 +114,13 @@ public class ForkJoinSolver
                     }
                 }
             }
+            if (shutdown.get()) {
+                break;
+            }
         }
         //maze.move(player, maze.start());
-        // all nodes explored
+
+        // all nodes explored, wait for children
         for (ForkJoinSolver child : children) {
             List<Integer> result = child.join();
             if (result != null) {
