@@ -1,0 +1,15 @@
+Starting with the shared resources we realized that the visited set has to be a shared resource and thus thread safe
+this was easliy done by using the ConcurrentSkipList class. the frontier stack is completely local and the predecessors 
+are all merged together when the forks join back together. For our solution we made an additional constructor taking all variables. 
+In the ParallelSearch method we basically followed the instructions given to us. We pop a node from frontiers. Check that it's not empty, 
+'check if it has been visited, if not add the node to the visited set and move the player, if the goal has been found we use the pathFromTo given to us.
+To make sure all forks stop we introduced a global flag (included in the constructor) which is set to true when a goal has been found 
+or when all nodes have been explored. once on a node, each neighbour is checked. this is where we fork using the forkAfter variable and a simple counter 
+to keep track of when to fork. When all nodes are explored we join together all forks and return the result or null if no goal was found.
+
+
+from requirements:
+
+discuss race condition and data races
+
+discuss lock-free(ness)
