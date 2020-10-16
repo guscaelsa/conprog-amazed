@@ -1,4 +1,4 @@
-package src.main.amazed.solver;
+package amazed.solver;
 
 import amazed.maze.Maze;
 
@@ -49,9 +49,10 @@ public class ForkJoinSolver
         this.shutdown = new Flag();
     }
 
-    public ForkJoinSolver(Maze maze, Set<Integer> visited, Map<Integer, Integer> predecessor, int start, Flag shutdown) {
+    public ForkJoinSolver(Maze maze, Set<Integer> visited, Map<Integer, Integer> predecessor, int start, Flag shutdown, int forkAfter) {
         this(maze);
         this.predecessor.putAll(predecessor); // copy the parent's predecessor
+        this.forkAfter = forkAfter;
 
         // this is really ugly, but it seems to be the way this class was designed
         this.visited = visited;
@@ -107,7 +108,7 @@ public class ForkJoinSolver
                     }
 
                     if (count >= forkAfter /*should fork?*/) {
-                        ForkJoinSolver child = new ForkJoinSolver(maze, visited, predecessor, nb, shutdown);
+                        ForkJoinSolver child = new ForkJoinSolver(maze, visited, predecessor, nb, shutdown, forkAfter);
                         children.add(child);
                         child.fork();
                         count = 0;

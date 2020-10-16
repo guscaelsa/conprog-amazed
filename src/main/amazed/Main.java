@@ -25,7 +25,7 @@ public class Main
 
     private static String map = "maps/169medium.map";
     private static boolean sequential = false;
-    private static int forkAfter = 0;
+    private static int forkAfter = 10;
     private static int period = 100;
 
     private static void parseArguments(String[] args)
