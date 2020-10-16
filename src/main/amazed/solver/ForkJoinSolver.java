@@ -1,4 +1,4 @@
-package amazed.solver;
+package src.main.amazed.solver;
 
 import amazed.maze.Maze;
 
@@ -80,6 +80,7 @@ public class ForkJoinSolver
 
     private List<Integer> parallelSearch() {
         // System.out.println("QQQ " + System.identityHashCode(visited));
+        int count = 0;
         int player = maze.newPlayer(start);
         frontier.push(start);
 
@@ -105,12 +106,14 @@ public class ForkJoinSolver
                         break;
                     }
 
-                    if (true /*should fork?*/) {
+                    if (count >= forkAfter /*should fork?*/) {
                         ForkJoinSolver child = new ForkJoinSolver(maze, visited, predecessor, nb, shutdown);
                         children.add(child);
                         child.fork();
+                        count = 0;
                     } else {
                         frontier.push(nb);
+                        count++;
                     }
                 }
             }
