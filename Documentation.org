@@ -1,3 +1,7 @@
+#+TITLE: Amazed Documentation
+#+AUTHOR: Matthijs de Vries and Elsa Carlsson
+#+OPTIONS: TOC:nil ':t
+
 Starting with the shared resources we realized that the visited set has to be a shared resource and thus thread safe
 this was easliy done by using the ConcurrentSkipList class. the frontier stack is completely local and the predecessors 
 are all merged together when the forks join back together. For our solution we made an additional constructor taking all variables. 
