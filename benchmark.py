@@ -1,7 +1,7 @@
 import subprocess
 
 command = "/home/tom/ownCloud/uni/java/jdk-13.0.1/bin/java -javaagent:/home/tom/ownCloud/uni/java/idea-IC-192.7142.36/lib/idea_rt.jar=35971:/home/tom/ownCloud/uni/java/idea-IC-192.7142.36/bin -Dfile.encoding=UTF-8 -classpath /home/tom/uniproj/conprog/amazed_lab/out/production/amazed_lab amazed.Main"
-# command = "/home/tom/ownCloud/uni/java/jdk-13.0.1/bin/java -javaagent:/home/tom/ownCloud/uni/java/idea-IC-192.7142.36/lib/idea_rt.jar=35221:/home/tom/ownCloud/uni/java/idea-IC-192.7142.36/bin -Dfile.encoding=UTF-8 -classpath /home/tom/uniproj/conprog/amazed_lab/out/production/amazed_lab amazed.Main"
+
 
 def exec_command(map_file, parallelism):
     method = "sequential" if parallelism is None else "parallel-" + str(parallelism)
@@ -33,20 +33,54 @@ def time_for(map_name, parallelism):
         raise
 
 
-def average(map_name, parallelism, runs=1):
-    total = 0
-    for i in range(runs):
-        n = time_for(map_name, parallelism)
-        total += n
-    return total / runs
+def record(settings, time):
+    with open("results.txt", 'a') as f:
+        f.write("| {c:<10} | {m:<10} | {p:>5} | {t:>10} ms |\n".format(
+            c=settings["computer"],
+            m=settings["map_name"] + ".map",
+            p=settings["parallelism"],
+            t=time,
+        ))
+
+
+def run(settings, repeats):
+    for _ in range(repeats):
+        parallelism = settings["parallelism"]
+        parallelism = None if parallelism == "-" else int(parallelism)
+        t = time_for(settings["map_name"], parallelism)
+        print(t)
+        record(settings, t)
+
+
+def loop():
+    settings = {
+        "map_name": "unset",
+        "parallelism": "unset",
+        "computer": "unset",
+    }
+    while True:
+        try:
+            cmd = input("→ ")
+            if "=" in cmd:
+                name, val = cmd.split("=")
+                name = name.strip()
+                val = val.strip()
+                assert name in settings
+                settings[name] = val
+            elif cmd == "run":
+                run(settings, 1)
+            elif cmd.startswith("run"):
+                _, n = cmd.split()
+                run(settings, int(n))
+        except Exception as e:
+            print(e)
+        except KeyboardInterrupt:
+            print("<-quit->")
+            break
 
 
 # MAPS = ("small", "169medium", "medium", "custom", "large")
 MAPS = ["vast"]
 
 if __name__ == '__main__':
-    for parallelism in (None,  # 0, 1, 2, 3, 4, 5, 7, 10, 15,
-                        20):
-        print('| %s | ' % parallelism +
-              ' | '.join(str(average(name, parallelism)) for name in MAPS) +
-              ' |')
+    loop()
