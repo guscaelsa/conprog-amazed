@@ -4,6 +4,7 @@ import amazed.maze.Maze;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * <code>ForkJoinSolver</code> implements a solver for
@@ -18,17 +19,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class ForkJoinSolver
     extends SequentialSolver
 {
-    protected static class Flag {
-        protected boolean state = false;
-        void set() {
-            state = true;
-        }
-        boolean get() {
-            return state;
-        }
-    }
     protected List<ForkJoinSolver> children = new ArrayList<>();
-    protected Flag shutdown;
+    protected AtomicBoolean shutdown;
 
     /**
      * Creates a solver that searches in <code>maze</code> from the
@@ -46,10 +38,11 @@ public class ForkJoinSolver
     public ForkJoinSolver(Maze maze, int forkAfter) {
         this(maze);
         this.forkAfter = forkAfter;
-        this.shutdown = new Flag();
+        //this.shutdown = new Flag();
+        this.shutdown =  new AtomicBoolean(false);
     }
 
-    public ForkJoinSolver(Maze maze, Set<Integer> visited, Map<Integer, Integer> predecessor, int start, Flag shutdown, int forkAfter) {
+    public ForkJoinSolver(Maze maze, Set<Integer> visited, Map<Integer, Integer> predecessor, int start, AtomicBoolean shutdown, int forkAfter) {
         this(maze);
         this.predecessor.putAll(predecessor); // copy the parent's predecessor
         this.forkAfter = forkAfter;
@@ -92,17 +85,11 @@ public class ForkJoinSolver
                 maze.move(player, current);
 
                 if (maze.hasGoal(current)) {
-                    shutdown.set();
+                    shutdown.set(true);
                     return pathFromTo(maze.start(), current);
                 }
 
                 for (int nb: maze.neighbors(current)) {
-                    // if nb has not been already visited,
-                    // nb can be reached from current (i.e., current is nb's predecessor)
-                    if (!visited.contains(nb)) {
-                        predecessor.put(nb, current);
-                    }
-
                     if (shutdown.get()) {
                         break;
                     }

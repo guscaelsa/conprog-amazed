@@ -1,7 +1,7 @@
 import subprocess
 
 command = "/home/tom/ownCloud/uni/java/jdk-13.0.1/bin/java -javaagent:/home/tom/ownCloud/uni/java/idea-IC-192.7142.36/lib/idea_rt.jar=35971:/home/tom/ownCloud/uni/java/idea-IC-192.7142.36/bin -Dfile.encoding=UTF-8 -classpath /home/tom/uniproj/conprog/amazed_lab/out/production/amazed_lab amazed.Main"
-
+# command = "/home/tom/ownCloud/uni/java/jdk-13.0.1/bin/java -javaagent:/home/tom/ownCloud/uni/java/idea-IC-192.7142.36/lib/idea_rt.jar=35221:/home/tom/ownCloud/uni/java/idea-IC-192.7142.36/bin -Dfile.encoding=UTF-8 -classpath /home/tom/uniproj/conprog/amazed_lab/out/production/amazed_lab amazed.Main"
 
 def exec_command(map_file, parallelism):
     method = "sequential" if parallelism is None else "parallel-" + str(parallelism)
@@ -21,7 +21,7 @@ def time_for(map_name, parallelism):
 
     try:
         found_line, time = result.stdout.splitlines()
-        assert found_line == b"Goal found :-D"
+        # assert found_line == b"Goal found :-D", found_line
 
         solving, time, n, ms = time.split()
         assert (solving, time, ms) == (b"Solving", b"time:", b"ms")
@@ -33,7 +33,7 @@ def time_for(map_name, parallelism):
         raise
 
 
-def average(map_name, parallelism, runs=5):
+def average(map_name, parallelism, runs=1):
     total = 0
     for i in range(runs):
         n = time_for(map_name, parallelism)
@@ -41,10 +41,12 @@ def average(map_name, parallelism, runs=5):
     return total / runs
 
 
-MAPS = ("small", "169medium", "medium", "custom", "large")
+# MAPS = ("small", "169medium", "medium", "custom", "large")
+MAPS = ["vast"]
 
 if __name__ == '__main__':
-    for parallelism in (None, 0, 1, 2, 3, 4, 5, 7, 10, 15, 20):
+    for parallelism in (None,  # 0, 1, 2, 3, 4, 5, 7, 10, 15,
+                        20):
         print('| %s | ' % parallelism +
               ' | '.join(str(average(name, parallelism)) for name in MAPS) +
               ' |')

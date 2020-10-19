@@ -23,10 +23,10 @@ public class Main
     private final static String SEQUENTIAL = "sequential";
     private final static String PARALLEL = "parallel";
 
-    private static String map = "maps/large.map";
+    private static String map = "maps/vast.map";
     private static boolean sequential = false;
-    private static int forkAfter = 10;
-    private static int period = 100;
+    private static int forkAfter = 20;
+    private static int period = -1;
 
     private static void parseArguments(String[] args)
     {
