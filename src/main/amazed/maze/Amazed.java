@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
-import amazed.solver.QuickFJSolver;
 import amazed.solver.SequentialSolver;
 import amazed.solver.ForkJoinSolver;
 
@@ -70,8 +69,7 @@ public class Amazed
         if (sequentialSolver)
             solver = new SequentialSolver(maze);
         else
-            //solver = new ForkJoinSolver(maze, forkAfter);
-            solver = new QuickFJSolver(maze, forkAfter);
+            solver = new ForkJoinSolver(maze, forkAfter);
 
     }
 
