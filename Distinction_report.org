@@ -17,7 +17,7 @@ forkAfter	small	vast
 20		4.1ms	44.4ms
 
 
-We understand that for some larger forkAfter values the result should be faster than the sequential solver however with a lower forkAfter value it is going to take longer due to the overhead when joining together all the subtasks making it slower than the sequential solve.
+We understand that for some larger forkAfter values the result should be faster than the sequential solver however with a lower forkAfter value it is going to take longer due to the overhead when joining together all the subtasks making it slower than the sequential solve. The results can also differ if a better computer was used, with more cores and threads.
 
 Custom maps: 
 
@@ -36,11 +36,6 @@ workers		result
 4		144.9ms
 5		130.7ms
 7		120,2ms
-8		114.5ms
-9		 85.0ms
-10		 87.0ms
-15		 80.7ms
-20		 68.2ms
 
 Once again computed on a laptop with 4 CPUs and 2 cores and in this setting it seems not to differ that much. However one can still see the effect that with the more amount of workers the computation time goes down slightly.
 
