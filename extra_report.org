@@ -1,0 +1,16 @@
+Distinction assignment:
+
+Different values of forkAfter & evaluation to sequential solution:
+
+in our tests we have used various values for forkAfter: 
+0, 1, 2, 3, 4, 5, 7, 10, 15, 20
+We did not see the reason to test all values, so we started small with each value to see what happens with the use of different values, as we understood the correlation between the result and forkAfter we decided to just try a few different larger values of forkAfter: 7, 10, 15, 20
+
+from the tests it seemed clear that the seuential solution was faster then most of the parallel searches depending on the 
+forkAfter value. (add valid testresult here) We understand that for some larger forkAfter values the result should be faster than the sequential solver however with a lower forkAfter value it is going to take longer ddue to the overhaed when joining together all the subtasks making it slower than the sequential solve.
+
+Custom maps: 
+
+We made a custom map that is a lot larger than the medium map that we got from the lab material. This map is 40x40
+in size with the goal set in the bottom left corner of the map. We also made a 80x40 map by just adding a 40x40 grid of
+cells the player could move to above the lerga map.
