@@ -38,7 +38,6 @@ public class ForkJoinSolver
     public ForkJoinSolver(Maze maze, int forkAfter) {
         this(maze);
         this.forkAfter = forkAfter;
-        //this.shutdown = new Flag();
         this.shutdown =  new AtomicBoolean(false);
     }
 
@@ -86,13 +85,11 @@ public class ForkJoinSolver
 
                 if (maze.hasGoal(current)) {
                     shutdown.set(true);
-                    System.out.println("found goal");
                     return pathFromTo(maze.start(), current);
                 }
 
                 for (int nb: maze.neighbors(current)) {
                     if (shutdown.get()) {
-                        System.out.print(".");
                         break;
                     }
 
@@ -113,7 +110,6 @@ public class ForkJoinSolver
                 }
             }
             if (shutdown.get()) {
-                System.out.print("!");
                 break;
             }
         }

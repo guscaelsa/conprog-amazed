@@ -178,7 +178,6 @@ public class SequentialSolver
         }
         path.add(from);
         Collections.reverse(path);
-        System.out.println("path");
         return path;
     }
 }
