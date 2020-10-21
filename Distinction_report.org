@@ -12,15 +12,15 @@ We did not see the reason to test all values, so we started small with each valu
 from the tests it seemed clear that the sequential solution was faster then most of the parallel searches depending on the 
 ~forkAfter~ value. "-" marks the sequential times. With a higher ~forkAfter~ value the parallel search seemed to be faster which would be more apparent on a better computer as these tests were performed on a laptop with 4CPUs x 2 cores. these were the results performed on the small map and a custom 80x40 map called vast. these results are produced from an average over ten runs at each stage.
 
-forkAfter	small	vast
--		4.1ms	 40.1ms
-0		7.3ms	267.3ms
-5		7.1ms	246.6ms
-10		2.3ms	 74.9ms
-20		4.1ms	 44.4ms
+| ~forkAfter~ | small  | vast     |
+|-------------+--------+----------|
+|           0 | 7.3 ms | 267.3 ms |
+|           5 | 7.1 ms | 246.6 ms |
+|          10 | 2.3 ms | 74.9 ms  |
+|          20 | 4.1 ms | 44.4 ms  |
 
 
-We understand that for some larger forkAfter values the result should be faster than the sequential solver however with a lower forkAfter value it is going to take longer due to the overhead when joining together all the subtasks making it slower than the sequential solve.
+We understand that for some larger ~forkAfter~ values the result should be faster than the sequential solver however with a lower ~forkAfter~ value it is going to take longer due to the overhead when joining together all the subtasks making it slower than the sequential solve.
 
 * Custom maps
 
