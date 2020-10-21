@@ -2,21 +2,25 @@ package amazed;
 
 import amazed.maze.Amazed;
 
+import java.util.concurrent.ForkJoinPool;
+
 public class Benchmark {
     public static void main(String[] args)
             throws InterruptedException
     {
         String map = "maps/vast.map";
         boolean sequential = false;
-        int forkAfter = 20;
-        int runs = 30;
+        int forkAfter = 10;
+        int runs = 10;
 
         System.out.print(map);
         if (sequential) {
-            System.out.println(" @ -");
+            System.out.print(" @ -");
         } else {
-            System.out.println(" @ " + forkAfter);
+            System.out.print(" @ " + forkAfter);
         }
+        System.out.print(" [" + ForkJoinPool.getCommonPoolParallelism() + "]");
+        System.out.println();
 
         for (int i=0; i<runs; ++i) {
             Amazed amazed = new Amazed(map, sequential, forkAfter, -1);
