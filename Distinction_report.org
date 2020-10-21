@@ -24,3 +24,19 @@ Custom maps:
 We made a custom map that is a lot larger than the medium map that we got from the lab material. This map is 40x40
 in size with the goal set in the bottom left corner of the map. We also made a 80x40 map by just adding a 40x40 grid of
 cells the player could move to above the large map.
+
+Varying the amount of workers in the pool:
+
+We tried some different set of workers in the pool. this was done on the vast map and with {1, 2, 3, 4, 5, 7} workers computed from an average of 10 runs. The forkAfter value was set to 10.
+
+workers		result
+1		188.3ms
+2		190.5ms
+3		149.4ms
+4		144.9ms
+5		130.7ms
+7		120,2ms
+
+Once again computed on a laptop with 4 CPUs and 2 cores and in this setting it seems not to differ that much. However one can still see the effect that with the more amount of workers the computation time goes down slightly.
+
+
