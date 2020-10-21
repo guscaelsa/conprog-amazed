@@ -20,7 +20,8 @@ The predecessor-map also does not need to be shared, each thread only needs to k
     + Set termination flag
     + Return the found path
   + Otherwise, loop through all neighbors:
-    + If termination flag is set, break out of (the inner) loop
+    + If termination flag is set, break out of (inner) loop
+    + If this neighbor is already in the predecessor map, continue (inner) loop
     + Update predecessor map
     + Either: fork a child
     + Or: push to frontier
@@ -34,6 +35,17 @@ The predecessor-map also does not need to be shared, each thread only needs to k
 # Termination flag
 # Forking decision
 # Forking
+
+* Synchronization
+The threads are synchronized using two objects: the visited-map and the termination flag. These are a ~java.util.concurrent.ConcurrentSkipListSet~ and a ~java.util.concurrent.atomic.AtomicBoolean~ respectively.
+
+These classes are lock-free, and since we don't use any other synchronization our search is also lock-free.
+
+When a thread tries to visit a node, we call ~visited.add(current)~ and checks the returned boolean to see if we were allowed. This means that getting permission and blocking all other threads is atomic, so only a single thread will be allowed to visit any given node. In other words, there are no data races in how we use ~ConcurrentSkipListSet~.
+
+And the ~AtomicBoolean~ is just used as a simple flag; it starts of false and is eventually set to true. All threads then monitor this and shut down as soon as it becomes true. Because we in no way rely on when this happens (the flag will eventually be set and the threads will eventually look), there are no data races possible.
+
+In fact we could probably just use a raw ~boolean~ (without ~volatile~) for the terminate flag, and just wait for the value to eventually be updated. In fact, in my limited tests this vastly outperforms using an ~AtomicBoolean~.
 * --- :noexport:
 
 #+BEGIN_SRC java
