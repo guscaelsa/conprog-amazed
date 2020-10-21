@@ -86,14 +86,19 @@ public class ForkJoinSolver
 
                 if (maze.hasGoal(current)) {
                     shutdown.set(true);
+                    System.out.println("found goal");
                     return pathFromTo(maze.start(), current);
                 }
 
                 for (int nb: maze.neighbors(current)) {
                     if (shutdown.get()) {
+                        System.out.print(".");
                         break;
                     }
 
+                    if (predecessor.containsKey(nb)) {
+                        continue;
+                    }
                     predecessor.put(nb, current);
 
                     if (count >= forkAfter /*should fork?*/) {
@@ -108,6 +113,7 @@ public class ForkJoinSolver
                 }
             }
             if (shutdown.get()) {
+                System.out.print("!");
                 break;
             }
         }

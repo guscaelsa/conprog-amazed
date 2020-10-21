@@ -2,7 +2,16 @@
 #+AUTHOR: Matthijs de Vries and Elsa Carlsson
 #+OPTIONS: TOC:nil ':t
 
+* Data structures
+The parallel search uses the same three data structures as the sequential one: a frontier stack, a "visited" set, and a predecessor-map.
 
+The frontier stack is entirely local; every thread is searching through one part of the maze independently. Therefore it can continue to simply be a ~Stack~.
+
+To prevent multiple threads from visited the same node, the visited-set must be shared. The most natural choice for this is ~java.util.concurrent.ConcurrentSkipListSet~.
+
+The predecessor-map also does not need to be shared, each thread only needs to know how to get to its part of the maze. However, the map does need to be inherited by child threads as they need to know how their parent got to where it starts. But that is simple enough to do with a ~HashMap~.
+
+* Algorithm
 + Start by pushing the start node onto the frontier stack.
 + Until the frontier becomes empty:
   + Pop a "current" node from the frontier
@@ -11,6 +20,8 @@
     + Set termination flag
     + Return the found path
   + Otherwise, loop through all neighbors:
+    + If termination flag is set, break out of (the inner) loop
+    + Update predecessor map
     + Either: fork a child
     + Or: push to frontier
   + If termination flag is set, break out of loop
@@ -19,11 +30,11 @@
   + If it found a path, return that
 + return null
 
-    Repeat until the frontier becomes empty — meaning that all nodes have been explored:
-            Pop a node current from frontier; this is the node to explore in this iteration.
-            Check whether current is a goal; if it is, terminate the search successfully.
-            Otherwise, add current to visited (if it’s not already visited), move the player there, push all its neighbors onto the frontier stack, and update predecessor with information about how to reach current’s neighbors.
-        Once a goal has been found, method pathFromTo(from, to) reconstructs a path, as a list of node ids, from node from to node to (where from is the start node and to is a goal node) based on the information previously stored in predecessor. If no goal is found and all nodes have been explored, return null.
+# Trying to visit a node
+# Termination flag
+# Forking decision
+# Forking
+* --- :noexport:
 
 #+BEGIN_SRC java
         int count = 0;
@@ -45,6 +56,8 @@
                     if (shutdown.get()) {
                         break;
                     }
+
+                    predecessor.put(nb, current);
 
                     if (count >= forkAfter /*should fork?*/) {
                         ForkJoinSolver child = new ForkJoinSolver(maze, visited, predecessor, nb, shutdown, forkAfter);
