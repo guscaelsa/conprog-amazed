@@ -14,6 +14,7 @@ from the tests it seemed clear that the sequential solution was faster then most
 
 | ~forkAfter~ | small  | vast     |
 |-------------+--------+----------|
+|           - | 4.1 ms | 40.1 ms  |
 |           0 | 7.3 ms | 267.3 ms |
 |           5 | 7.1 ms | 246.6 ms |
 |          10 | 2.3 ms | 74.9 ms  |
