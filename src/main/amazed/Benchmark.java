@@ -6,7 +6,7 @@ public class Benchmark {
     public static void main(String[] args)
             throws InterruptedException
     {
-        String map = "maps/large.map";
+        String map = "maps/vast.map";
         boolean sequential = false;
         int forkAfter = 20;
         int runs = 10;
