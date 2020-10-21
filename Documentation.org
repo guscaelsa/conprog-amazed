@@ -2,6 +2,77 @@
 #+AUTHOR: Matthijs de Vries and Elsa Carlsson
 #+OPTIONS: TOC:nil ':t
 
+
++ Start by pushing the start node onto the frontier stack.
++ Until the frontier becomes empty:
+  + Pop a "current" node from the frontier
+  + Try to visit the current node, else continue loop
+  + If current is a goal:
+    + Set termination flag
+    + Return the found path
+  + Otherwise, loop through all neighbors:
+    + Either: fork a child
+    + Or: push to frontier
+  + If termination flag is set, break out of loop
++ Loop through all children:
+  + Join the child and look at its result
+  + If it found a path, return that
++ return null
+
+    Repeat until the frontier becomes empty — meaning that all nodes have been explored:
+            Pop a node current from frontier; this is the node to explore in this iteration.
+            Check whether current is a goal; if it is, terminate the search successfully.
+            Otherwise, add current to visited (if it’s not already visited), move the player there, push all its neighbors onto the frontier stack, and update predecessor with information about how to reach current’s neighbors.
+        Once a goal has been found, method pathFromTo(from, to) reconstructs a path, as a list of node ids, from node from to node to (where from is the start node and to is a goal node) based on the information previously stored in predecessor. If no goal is found and all nodes have been explored, return null.
+
+#+BEGIN_SRC java
+        int count = 0;
+        int player = maze.newPlayer(start);
+        frontier.push(start);
+
+        while (!frontier.empty()) {
+            int current = frontier.pop();
+
+            if (visited.add(current)) { // "true if this set did not already contain the specified element"
+                maze.move(player, current);
+
+                if (maze.hasGoal(current)) {
+                    shutdown.set(true);
+                    return pathFromTo(maze.start(), current);
+                }
+
+                for (int nb: maze.neighbors(current)) {
+                    if (shutdown.get()) {
+                        break;
+                    }
+
+                    if (count >= forkAfter /*should fork?*/) {
+                        ForkJoinSolver child = new ForkJoinSolver(maze, visited, predecessor, nb, shutdown, forkAfter);
+                        children.add(child);
+                        child.fork();
+                        count = 0;
+                    } else {
+                        frontier.push(nb);
+                        count++;
+                    }
+                }
+            }
+            if (shutdown.get()) {
+                break;
+            }
+        }
+        // all nodes explored, wait for children
+        for (ForkJoinSolver child : children) {
+            List<Integer> result = child.join();
+            if (result != null) {
+                return result;
+            }
+        }
+        // no goal found
+        return null;
+    }
+#+END_SRC
+
 Starting with the shared resources we realized that the visited set has to be a shared resource and thus thread safe
 this was easliy done by using the ConcurrentSkipList class. the frontier stack is completely local and the predecessors 
 are all merged together when the forks join back together. For our solution we made an additional constructor taking all variables. 

@@ -94,6 +94,8 @@ public class ForkJoinSolver
                         break;
                     }
 
+                    predecessor.put(nb, current);
+
                     if (count >= forkAfter /*should fork?*/) {
                         ForkJoinSolver child = new ForkJoinSolver(maze, visited, predecessor, nb, shutdown, forkAfter);
                         children.add(child);
