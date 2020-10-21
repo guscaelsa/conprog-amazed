@@ -44,6 +44,8 @@ def record(settings, time):
 
 
 def run(settings, repeats):
+    print("{p} on {m} as {c}".format(
+        p=settings["parallelism"], m=settings["map_name"], c=settings["computer"]))
     for _ in range(repeats):
         parallelism = settings["parallelism"]
         parallelism = None if parallelism == "-" else int(parallelism)
@@ -72,6 +74,7 @@ def loop():
             elif cmd.startswith("run"):
                 _, n = cmd.split()
                 run(settings, int(n))
+
         except Exception as e:
             print(e)
         except KeyboardInterrupt:
