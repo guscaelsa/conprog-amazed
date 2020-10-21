@@ -11,10 +11,6 @@
 1 Data structures
 ═════════════════
 
-  The parallel search uses the same three data structures as the
-  sequential one: a frontier stack, a “visited” set, and a
-  predecessor-map.
-
   The frontier stack is entirely local; every thread is searching
   through one part of the maze independently. Therefore it can continue
   to simply be a `Stack'.
@@ -23,11 +19,9 @@
   visited-set must be shared. The most natural choice for this is
   `java.util.concurrent.ConcurrentSkipListSet'.
 
-  The predecessor-map also does not need to be shared, each thread only
-  needs to know how to get to its part of the maze. However, the map
-  does need to be inherited by child threads as they need to know how
-  their parent got to where it starts. But that is simple enough to do
-  with a `HashMap'.
+  The predecessor-map does not need to be shared but needs to be
+  inherited by child threads as they need to know how their parent got
+  to where they start.
 
 
 2 Algorithm
@@ -65,19 +59,12 @@
   These classes are lock-free, and since we don’t use any other
   synchronization our search is also lock-free.
 
-  When a thread tries to visit a node, we call `visited.add(current)'
-  and checks the returned boolean to see if we were allowed. This means
-  that getting permission and blocking all other threads is atomic, so
-  only a single thread will be allowed to visit any given node. In other
-  words, there are no data races in how we use `ConcurrentSkipListSet'.
+  There is no data races when we use `ConcurrentSkipListSet' because
+  each thread checks if a node is free and takes control of it in a
+  single atomic operation, using `visited.add(current)' (and checking
+  the return value).
 
-  And the `AtomicBoolean' is just used as a simple flag; it starts of
-  false and is eventually set to true. All threads then monitor this and
-  shut down as soon as it becomes true. Because we in no way rely on
-  when this happens (the flag will eventually be set and the threads
-  will eventually look), there are no data races possible.
-
-  In fact we could probably just use a raw `boolean' (without
-  `volatile') for the terminate flag, and just wait for the value to
-  eventually be updated. In fact, in my limited tests this vastly
-  outperforms using an `AtomicBoolean'.
+  And there is no data races in our use of `AtomicBoolean' either,
+  because we never rely on the timing on when this is set. It starts of
+  false and is eventually set to true, and all threads will eventually
+  check it and see the new value.
