@@ -36,6 +36,11 @@ workers		result
 4		144.9ms
 5		130.7ms
 7		120,2ms
+8		114.5ms
+9		 85.0ms
+10		 87.0ms
+15		 80.7ms
+20		 68.2ms
 
 Once again computed on a laptop with 4 CPUs and 2 cores and in this setting it seems not to differ that much. However one can still see the effect that with the more amount of workers the computation time goes down slightly.
 
