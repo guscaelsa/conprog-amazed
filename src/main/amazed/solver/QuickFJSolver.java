@@ -38,6 +38,7 @@ public class QuickFJSolver
     public QuickFJSolver(Maze maze, int forkAfter) {
         this(maze);
         this.forkAfter = forkAfter;
+        this.shutdown = false;
         //this.shutdown =  new AtomicBoolean(false);
     }
 

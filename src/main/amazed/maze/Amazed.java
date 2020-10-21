@@ -70,8 +70,8 @@ public class Amazed
         if (sequentialSolver)
             solver = new SequentialSolver(maze);
         else
-            solver = new ForkJoinSolver(maze, forkAfter);
-            //solver = new QuickFJSolver(maze, forkAfter);
+            //solver = new ForkJoinSolver(maze, forkAfter);
+            solver = new QuickFJSolver(maze, forkAfter);
 
     }
 
@@ -79,18 +79,20 @@ public class Amazed
      * Runs the solver on the maze, waits for termination, and prints
      * to screen the outcome of the search.
      */
-    public void solve() { solve(true);}
-    public void solve(boolean print)
+    public boolean solve() { return solve(true);}
+    public boolean solve(boolean print)
     {
         ForkJoinPool pool = ForkJoinPool.commonPool();
         path = pool.invoke(solver);
+        boolean solved = path != null && maze.isValidPath(path);
         if (print) {
-            if (path != null && maze.isValidPath(path))
+            if (solved)
                 System.out.println("Goal found :-D");
             else
                 System.out.println("Search completed: no goal found :-(");
         }
         pool.shutdown();
+        return solved;
     }
 
     /**
